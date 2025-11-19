@@ -1,0 +1,39 @@
+# logging_filter_config.yaml
+# 第三方库日志级别控制
+third_party_loggers:
+  # PyTorch 生态
+  - name: "torio._extension.utils"
+    level: WARNING
+  - name: "torch"
+    level: WARNING
+  - name: "torchaudio"
+    level: WARNING
+  
+  # 数据可视化
+  - name: "matplotlib"
+    level: WARNING
+  - name: "matplotlib.font_manager"
+    level: ERROR
+  - name: "graphviz"
+    level: WARNING
+  
+  # 网络库
+  - name: "httpx"
+    level: WARNING
+  - name: "urllib3"
+    level: WARNING
+
+# 消息级别过滤（正则表达式）
+message_filters:
+  - pattern: "deprecate positional args"
+    level: DEBUG  # 低于此级别的会被过滤
+  - pattern: "Loading FFmpeg\\d*"
+    level: DEBUG
+  - pattern: "Failed to load FFmpeg"
+    level: DEBUG
+  - pattern: "matplotlib data path"
+    level: DEBUG
+  - pattern: "CONFIGDIR="
+    level: DEBUG
+  - pattern: "interactive is"
+    level: DEBUG

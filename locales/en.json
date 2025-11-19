@@ -1,0 +1,98 @@
+{
+  "app": {
+    "title": "Video/Audio Automatic SRT Subtitle Generator (NeMo ASR)",
+    "description": "Upload video or audio files to automatically generate SRT subtitles. Supports multiple NVIDIA NeMo ASR models.",
+    "startup": "Starting ASR Application...",
+    "shutdown": "ASR Application Closed."
+  },
+  "model": {
+    "settings_title": "⚙️ Model Settings",
+    "cloud_section_title": "### Cloud Model Selection",
+    "local_section_title": "### Local Model Loading",
+    "cloud_model_label": "Select Cloud Model",
+    "cloud_model_info": "Different models support different languages and scenarios",
+    "model_description_label": "Model Description",
+    "load_cloud_button": "🌐 Load Selected Cloud Model",
+    "load_local_button": "📁 Load Local Model",
+    "local_path_label": "Local Model Path (.nemo file)",
+    "local_path_placeholder": "e.g., /path/to/your_model.nemo",
+    "status_label": "Model Loading Status",
+    "not_loaded": "Model not loaded. Please select a model to load.",
+    "chunk_length_label": "Audio Chunk Length (seconds)",
+    "chunk_length_info": "Recommended 60-180 seconds. After changing, this setting will be saved with model selection when you click any 'Load Model' button.",
+    "load_success_cloud": "Cloud model '{model_name}' loaded successfully.",
+    "load_success_local": "Local model '{model_name}' loaded successfully.",
+    "load_fail_cloud": "Failed to load cloud model '{model_name}' from NGC: {error}",
+    "load_fail_local": "Failed to load model from local path: {error}",
+    "error_invalid_path": "Error: Invalid local model path: {path}",
+    "error_empty_path": "Error: Please enter a valid local model path before clicking 'Load Local Model'. To load a cloud model, use the corresponding button.",
+    "error_path_not_found": "Error: Path '{path}' in configuration file not found.",
+    "loading_cloud": "Detected previously used cloud model '{model_name}', attempting to reload...",
+    "loading_local": "Detected previously used local model '{path}', attempting to reload..."
+  },
+  "transcription": {
+    "tab_title": "📝 Generate Subtitles from Video/Audio",
+    "upload_label": "Upload video files (e.g., MP4, MKV) or audio files (e.g., MP3, WAV, M4A), supports mixed upload",
+    "submit_button": "▶️ Start Generating SRT from Video/Audio",
+    "status_label": "Processing Status",
+    "result_title": "📄 SRT Subtitle Results",
+    "download_label": "Download SRT File (.srt)",
+    "preview_label": "SRT Content Preview",
+    "error_no_model": "Error: ASR model not loaded. Please load a model first.",
+    "error_no_file": "Please upload at least one video file.",
+    "status_processing": "Status: Processing file, current: {current}/{total}, filename: {filename} ...",
+    "status_extracting": "Status: Extracting audio from {filename}...",
+    "status_transcribing": "Status: Transcribing audio (chunk size: {chunk_length}s)...",
+    "status_generating": "Status: Generating SRT content...",
+    "status_complete": "Processing complete. Total time {time:.2f} seconds. Generated {count} SRT file(s).",
+    "error_extraction_failed": "Error: Audio extraction failed. Please check the video file or ffmpeg installation.",
+    "warning_no_timestamps": "Warning: Transcription of file {filename} did not generate valid timestamps. Skipping this file.",
+    "error_processing": "Error: Unknown error occurred while processing file {filename}: {error}. Skipping this file.",
+    "log_start_processing": "Starting to process video/audio file, current: {current}/{total}, filename: {filename}",
+    "log_srt_saved": "SRT file saved at: {path}",
+    "log_audio_extracted": "Audio extracted successfully to: {path}",
+    "log_temp_cleanup_failed": "Unable to delete temporary audio file {path}: {error}"
+  },
+  "audio": {
+    "error_ffmpeg_not_found": "Error: ffmpeg not detected or not properly installed. Please install ffmpeg and ensure it's in the system PATH.",
+    "error_ffmpeg_failed": "FFmpeg audio extraction failed: {error}",
+    "error_ffmpeg_empty": "FFmpeg extracted audio file is empty.",
+    "error_file_invalid": "Error: Audio file path '{path}' is invalid or file does not exist.",
+    "error_load_failed": "Error occurred while loading or processing audio file '{path}' (pydub): {error}",
+    "log_audio_duration": "Total audio duration: {duration:.2f} seconds",
+    "log_processing_chunk": "Processing audio chunk: {start:.2f}s - {end:.2f}s",
+    "warning_no_segments": "Warning: Audio chunk failed to generate segment timestamps. Full transcription: '{text}'.",
+    "error_transcribe_chunk": "Error transcribing audio chunk '{path}': {error}",
+    "error_cleanup": "OS error deleting temporary audio file '{path}': {error}"
+  },
+  "asr": {
+    "log_init": "ASRService initialized, using device: {device}",
+    "error_not_loaded": "Error: ASR model not loaded, cannot perform transcription.",
+    "log_loading_audio": "Loading audio file '{path}' for chunked processing..."
+  },
+  "config": {
+    "log_init": "Configuration manager initialized. Config file path: {path}",
+    "error_invalid_format": "Error: Configuration file {path} :{error} format error. Using default configuration.",
+    "log_not_found": "Configuration file {path} not found. Will use default settings (first run).",
+    "log_saved": "Configuration saved to {path}",
+    "error_save_failed": "Error: Failed to save configuration file '{path}': {error}"
+  },
+  "ui": {
+    "tips_title": "### 💡 Usage Tips",
+    "tips_content": "- Local SRT files are saved in the `subtitles` folder in the script directory\n- Processing speed depends on your hardware (GPU/CPU) and file size",
+    "warning_cpu": "⚠️ **Warning: Currently running on CPU, which will be very slow. It is recommended to use a CUDA GPU for better performance.**",
+    "info_gpu_available": "ℹ️ **Tip: CUDA GPU detected. Will attempt to run on GPU after selecting a model.**",
+    "warning_no_gpu": "⚠️ **Warning: CUDA GPU not detected. Will run on CPU after selecting a model, which may be slower.**"
+  },
+  "logger": {
+    "shutdown": "Application shutting down, stopping logging system...",
+    "shutdown_success": "Logging system stopped successfully.",
+    "init_success": "Logging system initialized.",
+    "filter_load_warning": "Unable to load log filter configuration: {error}",
+    "filter_apply_warning": "Unable to apply third-party log filter configuration: {error}"
+  },
+  "translator": {
+    "file_not_found": "Translation file not found",
+    "load_error": "Error loading translation file: {error}"
+  }
+}

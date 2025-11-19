@@ -1,0 +1,98 @@
+{
+  "app": {
+    "title": "视频/音频自动生成 SRT 字幕工具 (NeMo ASR)",
+    "description": "上传视频或音频文件，自动生成SRT字幕。支持多种 NVIDIA NeMo ASR 模型。",
+    "startup": "启动 ASR 应用程序...",
+    "shutdown": "ASR 应用程序已关闭。"
+  },
+  "model": {
+    "settings_title": "⚙️ 模型设置",
+    "cloud_section_title": "### 云端模型选择",
+    "local_section_title": "### 本地模型加载",
+    "cloud_model_label": "选择云端模型",
+    "cloud_model_info": "不同模型对不同语言和场景的支持不同",
+    "model_description_label": "模型说明",
+    "load_cloud_button": "🌐 加载选定的云端模型",
+    "load_local_button": "📁 加载本地模型",
+    "local_path_label": "本地模型路径 (.nemo 文件)",
+    "local_path_placeholder": "例如: /path/to/your_model.nemo",
+    "status_label": "模型加载状态",
+    "not_loaded": "模型未加载。请选择一个模型进行加载。",
+    "chunk_length_label": "音频分块长度 (秒)",
+    "chunk_length_info": "推荐60-180秒。更改后，下次点击任一'加载模型'按钮时，此设置会与模型选择一同保存。",
+    "load_success_cloud": "云端模型 '{model_name}' 加载成功。",
+    "load_success_local": "本地模型 '{model_name}' 加载成功。",
+    "load_fail_cloud": "从NGC加载云端模型 '{model_name}' 失败: {error}",
+    "load_fail_local": "从本地路径加载模型失败: {error}",
+    "error_invalid_path": "错误：指定的本地模型路径无效: {path}",
+    "error_empty_path": "错误：请输入有效的本地模型路径后点击\"加载本地模型\"。若要加载云端模型，请使用对应按钮。",
+    "error_path_not_found": "错误：配置文件中的路径 '{path}' 未找到。",
+    "loading_cloud": "检测到上次使用云端模型 '{model_name}'，正在尝试重新加载...",
+    "loading_local": "检测到上次使用本地模型 '{path}'，正在尝试重新加载..."
+  },
+  "transcription": {
+    "tab_title": "📝 从视频/音频生成字幕",
+    "upload_label": "上传视频文件 (例如 MP4, MKV),或者上传音频文件 (例如 MP3, WAV, M4A)，支持音频视频混合上传",
+    "submit_button": "▶️ 开始从视频/音频生成 SRT",
+    "status_label": "处理状态",
+    "result_title": "📄 SRT字幕结果",
+    "download_label": "下载 SRT 文件 (.srt)",
+    "preview_label": "SRT 内容预览",
+    "error_no_model": "错误：ASR 模型未加载。请先加载模型。",
+    "error_no_file": "请上传至少一个视频文件。",
+    "status_processing": "状态：正在处理文件, 当前：{current}/{total}, 文件名：{filename} ...",
+    "status_extracting": "状态：正在提取 {filename} 的音频...",
+    "status_transcribing": "状态：正在转录音频 (分块大小: {chunk_length}秒)...",
+    "status_generating": "状态：正在生成 SRT 内容...",
+    "status_complete": "处理完成。总耗时 {time:.2f} 秒。生成{count} 个 SRT 文件。",
+    "error_extraction_failed": "错误：音频提取失败。请检查视频文件或ffmpeg安装。",
+    "warning_no_timestamps": "警告：转录文件 {filename} 未生成有效的时间戳。正在跳过此文件。",
+    "error_processing": "错误：处理文件 {filename} 时发生未知错误: {error}。正在跳过此文件。",
+    "log_start_processing": "开始处理视频/音频文件， 当前: {current}/{total}, 文件名: {filename}",
+    "log_srt_saved": "SRT 文件位于: {path}",
+    "log_audio_extracted": "音频提取成功到: {path}",
+    "log_temp_cleanup_failed": "无法删除临时音频文件 {path}: {error}"
+  },
+  "audio": {
+    "error_ffmpeg_not_found": "错误：ffmpeg 未检测到或未正确安装。请安装 ffmpeg 并确保其在系统 PATH 中。",
+    "error_ffmpeg_failed": "FFmpeg 提取音频失败: {error}",
+    "error_ffmpeg_empty": "FFmpeg 提取的音频文件为空。",
+    "error_file_invalid": "错误: 音频文件路径 '{path}' 无效或文件不存在。",
+    "error_load_failed": "加载或处理音频文件 '{path}' 时发生错误 (pydub): {error}",
+    "log_audio_duration": "音频总时长: {duration:.2f} 秒",
+    "log_processing_chunk": "处理音频块: {start:.2f}s - {end:.2f}s",
+    "warning_no_segments": "警告: 音频块未能生成分段时间戳。完整转录: '{text}'.",
+    "error_transcribe_chunk": "转录音频块 '{path}' 时发生错误: {error}",
+    "error_cleanup": "删除临时音频文件 '{path}' 时发生OS错误: {error}"
+  },
+  "asr": {
+    "log_init": "ASRservice 初始化，使用设备: {device}",
+    "error_not_loaded": "错误: ASR 模型未加载，无法进行转录。",
+    "log_loading_audio": "正在加载音频文件 '{path}' 进行分块处理..."
+  },
+  "config": {
+    "log_init": "配置管理器已初始化。配置文件路径: {path}",
+    "error_invalid_format": "错误: 配置文件 {path} :{error}格式错误。使用默认配置。",
+    "log_not_found": "配置文件 {path} 未找到。将使用默认设置 (首次运行)。",
+    "log_saved": "配置已保存到 {path}",
+    "error_save_failed": "错误：保存配置文件 '{path}' 失败: {error}"
+  },
+  "ui": {
+    "tips_title": "### 💡 使用提示",
+    "tips_content": "- 本地 SRT 文件保存在脚本目录下的 `subtitles` 文件夹中\n- 处理速度取决于您的硬件 (GPU/CPU) 和文件大小",
+    "warning_cpu": "⚠️ **警告：当前正在使用CPU运行，速度会非常慢。建议使用CUDA GPU以获得更好性能。**",
+    "info_gpu_available": "ℹ️ **提示：检测到CUDA GPU。选择模型后将尝试在GPU上运行。**",
+    "warning_no_gpu": "⚠️ **警告：未检测到CUDA GPU。选择模型后将在CPU上运行，速度可能较慢。**"
+  },
+  "logger": {
+    "shutdown": "应用程序正在关闭，停止日志系统...",
+    "shutdown_success": "日志系统已成功停止。",
+    "init_success": "日志系统已初始化。",
+    "filter_load_warning": "无法加载日志过滤配置: {error}",
+    "filter_apply_warning": "无法应用第三方日志过滤配置: {error}"
+  },
+  "translator": {
+    "file_not_found": "未找到翻译文件",
+    "load_error": "加载翻译文件时出错: {error}"
+  }
+}
