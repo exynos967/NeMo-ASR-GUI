@@ -6,7 +6,7 @@ import os
 from utils.logger import logger
 from interfaces import IASRService
 from utils.exceptions import ModelLoadError
-
+from core.post_processors import DefaultSegmentStrategy, JapaneseCharStrategy
 
 
 class ASRService(IASRService):
@@ -15,6 +15,9 @@ class ASRService(IASRService):
     def __init__(self) -> None:
         self.model = None
         self.device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+          # 当前使用的处理策略，默认为普通策略
+        self.processor_strategy = DefaultSegmentStrategy()
         logger.info(f"ASRservice 初始化，使用设备: {self.device}")
 
 
@@ -23,6 +26,20 @@ class ASRService(IASRService):
         """检查 ASR 模型是否已加载。"""
         return self.model is not None
     
+    def _update_strategy(self, model_name: str):
+        """
+        【工厂方法逻辑】：根据模型名称决定使用哪个策略。
+        这是整个设计模式的核心切换点。
+        """
+        name_lower = model_name.lower()
+        
+        if "ja" in name_lower or "japanese" in name_lower:
+            logger.info(f"模型 '{model_name}' 被识别为日语模型，切换至 [日语字符重组策略]。")
+            self.processor_strategy = JapaneseCharStrategy()
+        else:
+            logger.info(f"模型 '{model_name}' 被识别为通用模型，切换至 [默认段落策略]。")
+            self.processor_strategy = DefaultSegmentStrategy()
+
 
     def load_model_from_ngc(self, model_name: str) -> str:
         """从 NVIDIA NGC 加载预训练模型。"""
@@ -30,6 +47,8 @@ class ASRService(IASRService):
             self.model = nemo_asr.models.ASRModel.from_pretrained(
                 model_name=model_name, map_location=self.device
             )
+            # 加载成功后，更新策略
+            self._update_strategy(model_name)
             return f"云端模型 '{model_name}' 加载成功。"
         except Exception as e:
             self.model = None
@@ -47,6 +66,8 @@ class ASRService(IASRService):
                 restore_path=actual_path, map_location=self.device
             )
             model_name = os.path.basename(actual_path)
+              # 加载成功后，更新策略
+            self._update_strategy(model_name)
             return f"本地模型 '{model_name}' 加载成功。"
         except Exception as e:
             self.model = None
@@ -85,7 +106,7 @@ class ASRService(IASRService):
 
         audio_duration_ms = len(audio)
         logger.info(f"音频总时长: {audio_duration_ms / 1000:.2f} 秒")
-        all_segment_timestamps = []
+        all_results = []
 
         for i in range(0, audio_duration_ms, chunk_length_ms):
             start_time_ms = i
@@ -107,34 +128,15 @@ class ASRService(IASRService):
                     [temp_chunk_file_path], batch_size=1, timestamps=True
                 )
         
-                if (
-                    chunk_output_list
-                    and hasattr(chunk_output_list[0], "timestamp")
-                    and chunk_output_list[0].timestamp
-                    and "segment" in chunk_output_list[0].timestamp
-                ):
-                    current_chunk_segments = chunk_output_list[0].timestamp["segment"]
-                    chunk_global_start_offset_sec = start_time_ms / 1000.0
-                    for segment_data in current_chunk_segments:
-                        local_start_sec = segment_data["start"]
-                        local_end_sec = segment_data["end"]
-                        text_content = segment_data.get(
-                            "segment", segment_data.get("text", "")
-                        )
-                        global_start_sec = local_start_sec + chunk_global_start_offset_sec
-                        global_end_sec = local_end_sec + chunk_global_start_offset_sec
-                        if global_end_sec < global_start_sec:  # 安全检查
-                            global_end_sec = global_start_sec + 0.05
-                        all_segment_timestamps.append(
-                            {
-                                "start": global_start_sec,
-                                "end": global_end_sec,
-                                "segment": text_content,
-                            }
-                        )
-                else:
-                    full_text = chunk_output_list[0].text if chunk_output_list else "N/A"
-                    logger.warning(f"警告: 音频块未能生成分段时间戳。完整转录: '{full_text}'.")
+                chunk_global_start_offset_sec = start_time_ms / 1000.0
+
+                new_segments = self.processor_strategy.process(
+                    chunk_output_list, chunk_global_start_offset_sec
+                )
+                
+                if new_segments:
+                    all_results.extend(new_segments)
+
             except Exception as e:
                 logger.info(f"转录音频块 '{temp_chunk_file_path}' 时发生错误: {e}")
                 import traceback
@@ -149,5 +151,5 @@ class ASRService(IASRService):
                             f"删除临时音频文件 '{temp_chunk_file_path}' 时发生OS错误: {e_os}"
                         )
 
-        all_segment_timestamps.sort(key=lambda x: x["start"])
-        return all_segment_timestamps
+        all_results.sort(key=lambda x: x["start"])
+        return all_results

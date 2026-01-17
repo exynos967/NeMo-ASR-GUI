@@ -20,6 +20,7 @@ def create_ui(app: IApplication) -> gr.Blocks:
         "nvidia/parakeet-tdt-0.6b-v2": "只支持英语",
         "nvidia/parakeet-tdt_ctc-110m": "轻量级英语",
         "nvidia/parakeet-tdt-0.6b-v3": "支持保加利亚语 (bg)、克罗地亚语 (hr)、捷克语 (cs)、丹麦语 (da)、荷兰语 (nl)、英语 (en)、爱沙尼亚语 (et)、芬兰语 (fi)、法语 (fr)、德语 (de)、希腊语 (el)、匈牙利语 (hu)、意大利语 (it)、拉脱维亚语 (lv)、立陶宛语 (lt)、马耳他语 (mt)、波兰语 (pl)、葡萄牙语 (pt)、罗马尼亚语 (ro)、斯洛伐克语 (sk)、斯洛文语 (sl)、西班牙语 (es)、瑞典语 (sv)、俄语 (ru)、乌克兰语 (uk)",
+        "nvidia/parakeet-tdt_ctc-0.6b-ja": "日语模型，支持日语转录",
     }
 
     # --- 初始化配置 ---

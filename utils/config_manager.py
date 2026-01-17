@@ -64,11 +64,14 @@ class ConfigManager(IConfigManager):
 
     def save_config(self, local_model_path: str, chunk_length: int, cloud_model_name: str = None, language: str = "None"):
         """将当前配置保存到 config.json。"""
+        current_language = self.config.get("language", "zh")
+        final_language = language if language is not None else current_language
+
         config_to_save = {
             "local_model_path": local_model_path,  # NGC 为空字符串，本地为路径，如果从未选择则为 None
             "chunk_length_s": chunk_length,
             "cloud_model_name": cloud_model_name,
-            "language": language or self.config.get("language", "zh"),
+            "language": final_language,
         }
         try:
             with open(self.config_path, "w", encoding="utf-8") as config_file:
