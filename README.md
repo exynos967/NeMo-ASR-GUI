@@ -20,6 +20,7 @@
     *   `nvidia/parakeet-tdt-0.6b-v2`: 综合能力强，支持英语。
     *   `nvidia/parakeet-tdt_ctc-110m`: 轻量级模型，推理速度极快。
     *   `nvidia/parakeet-tdt-0.6b-v3`: 更强的多语言支持（支持欧语系等20+种语言）。
+    *   ` "nvidia/parakeet-tdt_ctc-0.6b-ja`: "日语模型，支持日语转录"
 *   **灵活部署**: 
     *   **云端加载**: 一键从 NVIDIA NGC 下载并加载最新模型。
     *   **本地加载**: 支持加载本地已有的 `.nemo` 模型文件，无需重复下载。

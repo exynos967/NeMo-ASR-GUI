@@ -23,6 +23,7 @@ Refactored with a modular design, this project supports a **multi-language inter
     *   `nvidia/parakeet-tdt-0.6b-v2`: Balanced performance, excellent for English.
     *   `nvidia/parakeet-tdt_ctc-110m`: Lightweight model with extremely fast inference speed.
     *   `nvidia/parakeet-tdt-0.6b-v3`: Stronger multilingual capabilities (supports 20+ European languages).
+    *   `nvidia/parakeet-tdt_ctc-0.6b-ja`: "Japanese model, supports Japanese transcription."
 *   **Flexible Deployment**:
     *   **Cloud Loading**: Download and load the latest models directly from NVIDIA NGC.
     *   **Local Loading**: Supports loading existing local `.nemo` model files to avoid repeated downloads.

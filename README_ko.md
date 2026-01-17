@@ -19,6 +19,8 @@
     *   `nvidia/parakeet-tdt-0.6b-v2`: 종합적인 성능이 우수하며 영어에 강합니다.
     *   `nvidia/parakeet-tdt_ctc-110m`: 경량 모델로 추론 속도가 매우 빠릅니다.
     *   `nvidia/parakeet-tdt-0.6b-v3`: 더 강력한 다국어 지원 (유럽어 등 20개 이상의 언어 지원).
+    *   `nvidia/parakeet-tdt_ctc-0.6b-ja`: "일본어 모델, 일본어 전사(Transcription) 지원."
+
 *   **유연한 배포**: 
     *   **클라우드 로드**: NVIDIA NGC에서 최신 모델을 원클릭으로 다운로드하여 로드합니다.
     *   **로컬 로드**: 기존에 보유한 `.nemo` 모델 파일 로드를 지원하여 중복 다운로드를 방지합니다.
