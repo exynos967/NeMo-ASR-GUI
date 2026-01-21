@@ -72,12 +72,13 @@ def create_ui(app: IApplication) -> gr.Blocks:
             chunk_slider: gr.update(label=t("model.chunk_length_label"), info=t("model.chunk_length_info")),
             # 字幕生成区域
             transcription_tab: gr.update(label=t("transcription.tab_title")),
+            format_checkboxes: gr.update(label=t("transcription.format_label")),
             video_input: gr.update(label=t("transcription.upload_label")),
             media_submit_button: gr.update(value=t("transcription.submit_button")),
             status_output: gr.update(label=t("transcription.status_label")),
-            srt_result_accordion: gr.update(label=t("transcription.result_title")),
-            srt_file_output: gr.update(label=t("transcription.download_label")),
-            srt_preview_output: gr.update(label=t("transcription.preview_label")),
+            subtitle_result_accordion: gr.update(label=t("transcription.result_title")),
+            subtitle_file_output: gr.update(label=t("transcription.download_label")),
+            subtitle_preview_output: gr.update(label=t("transcription.preview_label")),
             # 提示区域
             tips_title_md: gr.update(value=t("ui.tips_title")),
             tips_content_md: gr.update(value=t("ui.tips_content")),
@@ -167,16 +168,24 @@ def create_ui(app: IApplication) -> gr.Blocks:
                 label=t("transcription.upload_label"),
                 file_count="multiple",
             )
-            media_submit_button = gr.Button(
+
+        format_checkboxes = gr.CheckboxGroup(
+            choices=["srt", "vtt", "txt", "json", "lrc", "ass"],
+            value=["srt"],
+            label=t("transcription.format_label"),
+            interactive=True,
+        )
+
+        media_submit_button = gr.Button(
                 t("transcription.submit_button"), variant="primary", size="lg"
             )
 
         status_output = gr.Textbox(label=t("transcription.status_label"), lines=1, interactive=False)
-        with gr.Accordion(t("transcription.result_title"), open=True) as srt_result_accordion:
-            srt_file_output = gr.File(
+        with gr.Accordion(t("transcription.result_title"), open=True) as subtitle_result_accordion:
+            subtitle_file_output = gr.File(
                 label=t("transcription.download_label"), interactive=False, file_count="multiple"
             )
-            srt_preview_output = gr.Textbox(
+            subtitle_preview_output = gr.Textbox(
                 label=t("transcription.preview_label"), lines=10, max_lines=20, interactive=False
             )
 
@@ -193,9 +202,9 @@ def create_ui(app: IApplication) -> gr.Blocks:
         )
 
         media_submit_button.click(
-            fn=app.transcription_controller.process_media_for_srt,
-            inputs=[video_input, chunk_slider],
-            outputs=[status_output, srt_file_output, srt_preview_output],
+            fn=app.transcription_controller.process_media,
+            inputs=[video_input, chunk_slider, format_checkboxes],
+            outputs=[status_output, subtitle_file_output, subtitle_preview_output],
         )
 
         gr.Markdown("---")
@@ -222,9 +231,9 @@ def create_ui(app: IApplication) -> gr.Blocks:
             cloud_model_dropdown, model_description, load_cloud_model_button, 
             model_local_section_title, local_model_path_input, load_local_model_button,
             model_status_output, chunk_slider, transcription_tab, video_input,
-            media_submit_button, status_output, srt_result_accordion, srt_file_output,
-            srt_preview_output, tips_title_md, tips_content_md, ui_warning_cpu_md, ui_info_gpu_available_md,
-            ui_warning_no_gpu_md
+            media_submit_button, status_output, subtitle_result_accordion, subtitle_file_output,
+            subtitle_preview_output, tips_title_md, tips_content_md, ui_warning_cpu_md, ui_info_gpu_available_md,
+            ui_warning_no_gpu_md,format_checkboxes
         ]
         
         language_dropdown.change(

@@ -65,16 +65,18 @@ class IConfigManager(ABC):
     
     
     
-class ISrtGenerator(ABC):
+class ISubtitleGenerator(ABC):
     """
-    生成 SRT 字幕文件内容的服务。
+    字幕生成服务接口。
+    支持多种格式转换逻辑
     """
     @abstractmethod
-    def generate_srt_content(self, segment_timestamps: list) -> str:
+    def generate_content(self, segment_timestamps: list, format_type: str) -> str:
         """
-        根据时间戳列表生成 SRT 格式的字幕内容。
+        根据时间戳列表生成指定格式的字幕内容。
         ARGS:
             segment_timestamps: 包含 {'start': float, 'end': float, 'segment': str} 的列表。
+            format_type: 格式类型 (e.g., 'srt', 'vtt', 'txt', 'json')
         RETURNS:
             SRT 格式的字符串。
         """
@@ -115,11 +117,12 @@ class ITranscriptionController(ABC):
     一个专门处理转录相关 UI 事件的控制器。
     """
     @abstractmethod
-    def process_media_for_srt(self, media_file_objs: list, chunk_length_s: int):
+    def process_media(self, media_file_objs: list, chunk_length_s: int, output_formats: list):
         """处理上传的视频/音频文件，生成 SRT 字幕文件。
         ARGS:
             media_file_objs: Gradio 上传的视频/音频文件对象列表。
             chunk_length_s: 音频分块长度（秒）。
+            outpu_formats: 输出字幕格式列表 (e.g., ['srt', 'vtt'])
         YIELDS:
             状态消息 (str), 输出 SRT 文件路径列表 (list), SRT 内容预览 (str)。
         """
@@ -154,9 +157,10 @@ class IApplication(ABC):
 
     @property
     @abstractmethod
-    def srt_generator(self) -> ISrtGenerator:
-        """获取 SRT 生成服务实例。"""
+    def subtitle_generator(self) -> ISubtitleGenerator:
+        """获取字幕生成服务实例。"""
         ...
+        
     @property
     @abstractmethod
     def model_controller(self) -> IModelController:

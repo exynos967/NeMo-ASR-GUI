@@ -17,6 +17,12 @@ Refactored with a modular design, this project supports a **multi-language inter
 ## ✨ Core Features
 
 *   **Multi-language Interface**: Built-in Internationalization (I18n) support. Switch between **Chinese / English / Japanese / Korean** with one click.
+*   **Multi-format Output**: Supports generating various subtitle and text formats:
+    *   `SRT`: The most widely used standard movie subtitle format.
+    *   `VTT`: Web video (HTML5) standard subtitle format.
+    *   `ASS`: Advanced subtitle format supporting styles, effects, and positioning (optimized for HD resolution).
+    *   `LRC`: Synchronized lyric format for music players.
+    *   `TXT / JSON`: Plain text or structured data, convenient for post-processing, archiving, or API integration.
 *   **Universal Media Processing**: Unified entry for all media types. Supports direct uploading of **MP4, MKV, AVI, MP3, WAV, FLAC**, and almost all common formats.
 *   **Batch Transcription**: Supports uploading multiple files at once with automatic queue processing for high efficiency.
 *   **Multi-Model Support**:
@@ -52,8 +58,8 @@ Refactored with a modular design, this project supports a **multi-language inter
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/NINIYOYYO/parakeet-tdt-0.6b-v2-SRT-GUI.git
-    cd parakeet-tdt-0.6b-v2-SRT-GUI
+    git clone https://github.com/NINIYOYYO/NeMo-ASR-GUI.git
+    cd NeMo-ASR-GUI.git
     ```
 
 2.  **Create and Activate Virtual Environment:**

@@ -1,7 +1,7 @@
 {
     "app": {
-      "title": "ビデオ/オーディオからSRT字幕を自動生成 (NeMo ASR)",
-      "description": "ビデオまたはオーディオファイルをアップロードして、SRT字幕を自動生成します。複数のNVIDIA NeMo ASRモデルに対応しています。",
+      "title": "ビデオ/オーディオから字幕を自動生成 (NeMo ASR)",
+      "description": "ビデオまたはオーディオファイルをアップロードして、字幕を自動生成します。複数のNVIDIA NeMo ASRモデルに対応しています。",
       "startup": "ASRアプリケーションを起動しています...",
       "shutdown": "ASRアプリケーションはシャットダウンしました。"
     },
@@ -33,25 +33,26 @@
     "transcription": {
       "tab_title": "📝 ビデオ/オーディオから字幕を生成",
       "upload_label": "ビデオファイル (例: MP4, MKV) またはオーディオファイル (例: MP3, WAV, M4A) をアップロードします。ビデオとオーディオの混合アップロードに対応しています。",
-      "submit_button": "▶️ ビデオ/オーディオからSRT生成を開始",
+      "submit_button": "▶️ ビデオ/オーディオから生成を開始",
       "status_label": "処理ステータス",
-      "result_title": "📄 SRT字幕の結果",
-      "download_label": "SRTファイルをダウンロード (.srt)",
-      "preview_label": "SRT内容のプレビュー",
+      "result_title": "📄 字幕の結果",
+      "download_label": "ファイルをダウンロード",
+      "preview_label": "内容のプレビュー",
       "error_no_model": "エラー：ASRモデルが読み込まれていません。まずモデルを読み込んでください。",
       "error_no_file": "少なくとも1つのビデオファイルをアップロードしてください。",
       "status_processing": "ステータス：ファイルを処理中, 現在：{current}/{total}, ファイル名：{filename} ...",
       "status_extracting": "ステータス：{filename} の音声を抽出中...",
       "status_transcribing": "ステータス：音声を文字起こし中 (チャンクサイズ: {chunk_length}秒)...",
-      "status_generating": "ステータス：SRTコンテンツを生成中...",
-      "status_complete": "処理が完了しました。合計所要時間: {time:.2f}秒。{count}個のSRTファイルを生成しました。",
+      "status_generating": "ステータス：コンテンツを生成中...",
+      "status_complete": "処理が完了しました。合計所要時間: {time:.2f}秒。{count}個のファイルを生成しました。",
       "error_extraction_failed": "エラー：音声の抽出に失敗しました。ビデオファイルまたはffmpegのインストールを確認してください。",
       "warning_no_timestamps": "警告：文字起こしファイル {filename} は有効なタイムスタンプを生成しませんでした。このファイルをスキップします。",
       "error_processing": "エラー：ファイル {filename} の処理中に不明なエラーが発生しました: {error}。このファイルをスキップします。",
       "log_start_processing": "ビデオ/オーディオファイルの処理を開始, 現在: {current}/{total}, ファイル名: {filename}",
-      "log_srt_saved": "SRTファイルは次の場所にあります: {path}",
+      "log_saved": "ファイルは次の場所にあります: {path}",
       "log_audio_extracted": "音声の抽出に成功しました: {path}",
-      "log_temp_cleanup_failed": "一時音声ファイル {path} を削除できませんでした: {error}"
+      "log_temp_cleanup_failed": "一時音声ファイル {path} を削除できませんでした: {error}",
+      "format_label": "出力フォーマットを選択 (複数選択可)"
     },
     "audio": {
       "error_ffmpeg_not_found": "エラー：ffmpegが検出されないか、正しくインストールされていません。ffmpegをインストールし、システムのPATHに含まれていることを確認してください。",
@@ -79,7 +80,7 @@
     },
     "ui": {
       "tips_title": "### 💡 ヒントとコツ",
-      "tips_content": "- ローカルのSRTファイルは、スクリプトディレクトリ内の `subtitles` フォルダに保存されます\n- 処理速度は、お使いのハードウェア（GPU/CPU）とファイルのサイズによって異なります",
+      "tips_content": "- ローカルのファイルは、スクリプトディレクトリ内の `subtitles` フォルダに保存されます\n- 処理速度は、お使いのハードウェア（GPU/CPU）とファイルのサイズによって異なります",
       "warning_cpu": "⚠️ **警告：現在CPUで実行中のため、処理速度が非常に遅くなります。パフォーマンス向上のためにCUDA GPUの使用を推奨します。**",
       "info_gpu_available": "ℹ️ **ヒント：CUDA GPUが検出されました。モデルを選択すると、GPUでの実行が試みられます。**",
       "warning_no_gpu": "⚠️ **警告：CUDA GPUが検出されませんでした。モデルを選択すると、CPUで実行されるため、処理が遅くなる可能性があります。**"

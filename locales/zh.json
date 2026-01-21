@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "视频/音频自动生成 SRT 字幕工具 (NeMo ASR)",
-    "description": "上传视频或音频文件，自动生成SRT字幕。支持多种 NVIDIA NeMo ASR 模型。",
+    "title": "视频/音频自动生成字幕工具 (NeMo ASR)",
+    "description": "上传视频或音频文件，自动生成字幕。支持多种 NVIDIA NeMo ASR 模型。",
     "startup": "启动 ASR 应用程序...",
     "shutdown": "ASR 应用程序已关闭。"
   },
@@ -33,25 +33,26 @@
   "transcription": {
     "tab_title": "📝 从视频/音频生成字幕",
     "upload_label": "上传视频文件 (例如 MP4, MKV),或者上传音频文件 (例如 MP3, WAV, M4A)，支持音频视频混合上传",
-    "submit_button": "▶️ 开始从视频/音频生成 SRT",
+    "submit_button": "▶️ 开始从视频/音频生成 ",
     "status_label": "处理状态",
-    "result_title": "📄 SRT字幕结果",
-    "download_label": "下载 SRT 文件 (.srt)",
-    "preview_label": "SRT 内容预览",
+    "result_title": "📄 字幕结果",
+    "download_label": "下载  文件 (.)",
+    "preview_label": " 内容预览",
     "error_no_model": "错误：ASR 模型未加载。请先加载模型。",
     "error_no_file": "请上传至少一个视频文件。",
     "status_processing": "状态：正在处理文件, 当前：{current}/{total}, 文件名：{filename} ...",
     "status_extracting": "状态：正在提取 {filename} 的音频...",
     "status_transcribing": "状态：正在转录音频 (分块大小: {chunk_length}秒)...",
-    "status_generating": "状态：正在生成 SRT 内容...",
-    "status_complete": "处理完成。总耗时 {time:.2f} 秒。生成{count} 个 SRT 文件。",
+    "status_generating": "状态：正在生成  内容...",
+    "status_complete": "处理完成。总耗时 {time:.2f} 秒。生成{count} 个  文件。",
     "error_extraction_failed": "错误：音频提取失败。请检查视频文件或ffmpeg安装。",
     "warning_no_timestamps": "警告：转录文件 {filename} 未生成有效的时间戳。正在跳过此文件。",
     "error_processing": "错误：处理文件 {filename} 时发生未知错误: {error}。正在跳过此文件。",
     "log_start_processing": "开始处理视频/音频文件， 当前: {current}/{total}, 文件名: {filename}",
-    "log_srt_saved": "SRT 文件位于: {path}",
+    "log_saved": " 文件位于: {path}",
     "log_audio_extracted": "音频提取成功到: {path}",
-    "log_temp_cleanup_failed": "无法删除临时音频文件 {path}: {error}"
+    "log_temp_cleanup_failed": "无法删除临时音频文件 {path}: {error}",
+    "format_label": "选择输出格式 (支持多选)"
   },
   "audio": {
     "error_ffmpeg_not_found": "错误：ffmpeg 未检测到或未正确安装。请安装 ffmpeg 并确保其在系统 PATH 中。",
@@ -79,7 +80,7 @@
   },
   "ui": {
     "tips_title": "### 💡 使用提示",
-    "tips_content": "- 本地 SRT 文件保存在脚本目录下的 `subtitles` 文件夹中\n- 处理速度取决于您的硬件 (GPU/CPU) 和文件大小",
+    "tips_content": "- 本地  文件保存在脚本目录下的 `subtitles` 文件夹中\n- 处理速度取决于您的硬件 (GPU/CPU) 和文件大小",
     "warning_cpu": "⚠️ **警告：当前正在使用CPU运行，速度会非常慢。建议使用CUDA GPU以获得更好性能。**",
     "info_gpu_available": "ℹ️ **提示：检测到CUDA GPU。选择模型后将尝试在GPU上运行。**",
     "warning_no_gpu": "⚠️ **警告：未检测到CUDA GPU。选择模型后将在CPU上运行，速度可能较慢。**"

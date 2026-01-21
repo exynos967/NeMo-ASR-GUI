@@ -18,6 +18,6 @@ class TranscriptionError(BaseAppException):
     """当转录过程失败时引发。"""
     pass
 
-class SrtGenerationError(BaseAppException):
+class SubtitleGenerationError(BaseAppException):
     """当SRT内容生成失败时引发。"""
     pass

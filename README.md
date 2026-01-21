@@ -14,6 +14,12 @@
 ## ✨ 核心功能
 
 *   **多语言界面**: 内置国际化支持，支持一键切换 **中文 / English / 日本語 / 한국어** 界面。
+*   **多格式输出**: 支持生成多种字幕/文本格式：
+    *   `SRT`: 标准电影字幕格式。
+    *   `VTT`: 网页视频标准格式。
+    *   `ASS`: 支持高级样式和定位的字幕格式（已优化高清分辨率适配）。
+    *   `LRC`: 歌词同步格式。
+    *   `TXT / JSON`: 方便后续数据处理和存档。
 *   **全能媒体处理**: 不再区分视频或音频入口，支持直接上传 **MP4, MKV, AVI, MP3, WAV, FLAC** 等几乎所有常见格式。
 *   **批量转录**: 支持一次性上传多个文件，排队自动处理，高效便捷。
 *   **多模型支持**:
@@ -49,8 +55,8 @@
 
 1.  **克隆仓库:**
     ```bash
-    git clone https://github.com/NINIYOYYO/parakeet-tdt-0.6b-v2-SRT-GUI.git
-    cd parakeet-tdt-0.6b-v2-SRT-GUI
+    git clone https://github.com/NINIYOYYO/NeMo-ASR-GUI.git
+    cd NeMo-ASR-GUI.git
     ```
 
 2.  **创建并激活虚拟环境:**

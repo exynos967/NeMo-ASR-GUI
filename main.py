@@ -1,7 +1,7 @@
 from utils.config_manager import ConfigManager
 from core.asr_service import ASRService
 from core.audio_processor import AudioService
-from core.srt_generator import SrtService
+from core.subtitle_generator import SubtitleService
 
 from application import Application
 from utils.logger import logger
@@ -13,13 +13,13 @@ def create_app() -> Application:
     config = ConfigManager()
     asr_service = ASRService()
     audio_service = AudioService()
-    srt_generator = SrtService()
+    subtitle_generator = SubtitleService()
     
     return Application(
         config_manager=config,
         asr_service=asr_service,
         audio_service=audio_service,
-        srt_generator=srt_generator
+        subtitle_generator=subtitle_generator
     )
 
 

@@ -3,7 +3,7 @@ import os
 import time
 from pathlib import Path
 from interfaces import IASRService
-from interfaces import ITranscriptionController, IAudioService, ISrtGenerator
+from interfaces import ITranscriptionController, IAudioService, ISubtitleGenerator
 from utils.exceptions import TranscriptionError
 from utils.logger import logger 
 
@@ -13,20 +13,21 @@ class TranscriptionController(ITranscriptionController):
     一个专门处理转录相关 UI 事件的控制器。
     """
 
-    def __init__(self, app_services: IASRService, audio_service: IAudioService, srt_generator: ISrtGenerator) -> None:
+    def __init__(self, app_services: IASRService, audio_service: IAudioService, subtitle_generator: ISubtitleGenerator) -> None:
        
         self.app_services = app_services
         self.audio_service = audio_service
-        self.srt_generator = srt_generator
+        self.subtitle_generator = subtitle_generator
         
         self.subtitles_folder_path = Path(__file__).resolve().parent.parent / "subtitles"
 
     
-    def process_media_for_srt(self, media_file_objs: list, chunk_length_s: int):
+    def process_media(self, media_file_objs: list, chunk_length_s: int, output_formats: list):
         """处理上传的视频/音频文件，生成 SRT 字幕文件。
         ARGS:
             media_file_objs: Gradio 上传的视频/音频文件对象列表。
             chunk_length_s: 音频分块长度（秒）。
+            outpu_formats: 输出字幕格式列表 (e.g., ['srt', 'vtt'])
         YIELDS:
             状态消息 (str), 输出 SRT 文件路径列表 (list), SRT 内容预览 (str)。
         """
@@ -38,8 +39,11 @@ class TranscriptionController(ITranscriptionController):
         if media_file_objs is None:
             yield "请上传至少一个视频文件。", None, ""
             return
+        
+        if not output_formats:
+            output_formats = ['srt']
 
-        output_srt_paths_for_downloads = []
+        output_files_all = []
         total_files = len(media_file_objs)
         start_time_total = time.time()
 
@@ -51,7 +55,7 @@ class TranscriptionController(ITranscriptionController):
             yield f"状态：正在处理文件, 当前：{i+1}/{total_files}, 文件名：{file_name} ...", None, ""
 
             extracted_audio_path = None
-            output_srt_path_for_download = None  # 用于 Gradio File 组件
+            output_path_for_download = None  # 用于 Gradio File 组件
 
             try:
                 yield f"状态：正在提取 {file_name} 的音频...", None, ""
@@ -70,23 +74,29 @@ class TranscriptionController(ITranscriptionController):
                     yield f"警告：转录文件 {file_name} 未生成有效的时间戳。正在跳过此文件。", None, ""
                     continue
 
-                yield "状态：正在生成 SRT 内容...", None, ""
-                srt_content = self.srt_generator.generate_srt_content(segment_timestamps)
-                srt_file_name = (
-                    os.path.basename(input_media_path).rsplit(".", 1)[0] + ".srt"
-                )
+
+                base_name = os.path.basename(input_media_path).rsplit(".", 1)[0]
+
+                yield f"状态：正在生成字幕文件 ({', '.join(output_formats)})...", None, ""
+
+                generated_content_preview = "" # 用于在UI预览，默认只预览第一个格式
+
                 if not os.path.exists(self.subtitles_folder_path):
                     os.makedirs(self.subtitles_folder_path, exist_ok=True)
-                output_srt_path_for_download = os.path.join(
-                    self.subtitles_folder_path, srt_file_name
-                )
+                for fmt in output_formats:
+                    try:
+                        content = self.subtitle_generator.generate_content(segment_timestamps, fmt)
+                        output_path_for_download = os.path.join(self.subtitles_folder_path,  f"{base_name}.{fmt}")
+                        with open(output_path_for_download, "w", encoding="utf-8") as subtitle_file:
+                            subtitle_file.write(content)
+                        output_files_all.append(output_path_for_download)
 
-                with open(output_srt_path_for_download, "w", encoding="utf-8") as srt_file:
-                    srt_file.write(srt_content)
-
-                output_srt_paths_for_downloads.append(output_srt_path_for_download)
-
-                logger.info(f"SRT 文件位于: {output_srt_path_for_download}")
+                        # 仅预览 SRT 或第一个格式
+                        if fmt == "srt" or generated_content_preview == "":
+                            generated_content_preview = content
+                    except Exception as e:
+                        logger.error(f"生成 {fmt} 格式失败: {e}")
+                    logger.info(f"字幕文件位于: {output_path_for_download}")
 
             except Exception as e:
                 logger.error(f"处理文件 {file_name} 时发生未知错误: {e}")
@@ -102,9 +112,9 @@ class TranscriptionController(ITranscriptionController):
                         logger.warning(f"无法删除临时音频文件 {extracted_audio_path}: {e_clean}")
    
             elapsed_time_total = time.time() - start_time_total
-            status_message = f"处理完成。总耗时 {elapsed_time_total:.2f} 秒。生成{len(output_srt_paths_for_downloads)} 个 SRT 文件。"
+            status_message = f"处理完成。总耗时 {elapsed_time_total:.2f} 秒。生成{len(output_files_all)} 个字幕文件。"
             logger.info(status_message)
-            yield status_message, output_srt_paths_for_downloads, srt_content
+            yield status_message, output_files_all, generated_content_preview
     
 
 

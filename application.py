@@ -2,7 +2,7 @@ from interfaces import (
     IApplication,
     IAudioService,
     IConfigManager,
-    ISrtGenerator,
+    ISubtitleGenerator,
     IASRService,
     IModelController,
     ITranscriptionController,
@@ -26,14 +26,14 @@ class Application(IApplication):
         config_manager: IConfigManager,
         asr_service: IASRService,
         audio_service: IAudioService,
-        srt_generator: ISrtGenerator,
+        subtitle_generator: ISubtitleGenerator,
     ) -> None:
 
         # 初始化核心服务
         self._config_manager = config_manager
         self._asr_service = asr_service
         self._audio_service = audio_service
-        self._srt_service = srt_generator
+        self._subtitle_service = subtitle_generator
 
         # 初始化控制器
         self._model_controller = ModelController(
@@ -42,7 +42,7 @@ class Application(IApplication):
         self._transcription_controller = TranscriptionController(
             app_services=self.asr_service,
             audio_service=self.audio_service,
-            srt_generator=self._srt_service,
+            subtitle_generator=self._subtitle_service,
         )
 
     @property
@@ -61,9 +61,9 @@ class Application(IApplication):
         return self._audio_service
 
     @property
-    def srt_generator(self) -> ISrtGenerator:
-        """获取 SRT 生成服务实例。"""
-        return self._srt_service
+    def subtitle_generator(self) -> ISubtitleGenerator:
+        """获取字幕生成服务实例。"""
+        return self._subtitle_service
 
     @property
     def model_controller(self) -> ModelController:

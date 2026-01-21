@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "Video/Audio Automatic SRT Subtitle Generator (NeMo ASR)",
-    "description": "Upload video or audio files to automatically generate SRT subtitles. Supports multiple NVIDIA NeMo ASR models.",
+    "title": "Video/Audio Automatic Subtitle Generator (NeMo ASR)",
+    "description": "Upload video or audio files to automatically generate  subtitles. Supports multiple NVIDIA NeMo ASR models.",
     "startup": "Starting ASR Application...",
     "shutdown": "ASR Application Closed."
   },
@@ -33,25 +33,26 @@
   "transcription": {
     "tab_title": "📝 Generate Subtitles from Video/Audio",
     "upload_label": "Upload video files (e.g., MP4, MKV) or audio files (e.g., MP3, WAV, M4A), supports mixed upload",
-    "submit_button": "▶️ Start Generating SRT from Video/Audio",
+    "submit_button": "▶️ Start Generating  from Video/Audio",
     "status_label": "Processing Status",
-    "result_title": "📄 SRT Subtitle Results",
-    "download_label": "Download SRT File (.srt)",
-    "preview_label": "SRT Content Preview",
+    "result_title": "📄  Subtitle Results",
+    "download_label": "Download  File (.)",
+    "preview_label": " Content Preview",
     "error_no_model": "Error: ASR model not loaded. Please load a model first.",
     "error_no_file": "Please upload at least one video file.",
     "status_processing": "Status: Processing file, current: {current}/{total}, filename: {filename} ...",
     "status_extracting": "Status: Extracting audio from {filename}...",
     "status_transcribing": "Status: Transcribing audio (chunk size: {chunk_length}s)...",
-    "status_generating": "Status: Generating SRT content...",
-    "status_complete": "Processing complete. Total time {time:.2f} seconds. Generated {count} SRT file(s).",
+    "status_generating": "Status: Generating  content...",
+    "status_complete": "Processing complete. Total time {time:.2f} seconds. Generated {count}  file(s).",
     "error_extraction_failed": "Error: Audio extraction failed. Please check the video file or ffmpeg installation.",
     "warning_no_timestamps": "Warning: Transcription of file {filename} did not generate valid timestamps. Skipping this file.",
     "error_processing": "Error: Unknown error occurred while processing file {filename}: {error}. Skipping this file.",
     "log_start_processing": "Starting to process video/audio file, current: {current}/{total}, filename: {filename}",
-    "log_srt_saved": "SRT file saved at: {path}",
+    "log_saved": " file saved at: {path}",
     "log_audio_extracted": "Audio extracted successfully to: {path}",
-    "log_temp_cleanup_failed": "Unable to delete temporary audio file {path}: {error}"
+    "log_temp_cleanup_failed": "Unable to delete temporary audio file {path}: {error}",
+    "format_label": "Select Output Formats (Multiple Choice)"
   },
   "audio": {
     "error_ffmpeg_not_found": "Error: ffmpeg not detected or not properly installed. Please install ffmpeg and ensure it's in the system PATH.",
@@ -79,7 +80,7 @@
   },
   "ui": {
     "tips_title": "### 💡 Usage Tips",
-    "tips_content": "- Local SRT files are saved in the `subtitles` folder in the script directory\n- Processing speed depends on your hardware (GPU/CPU) and file size",
+    "tips_content": "- Local  files are saved in the `subtitles` folder in the script directory\n- Processing speed depends on your hardware (GPU/CPU) and file size",
     "warning_cpu": "⚠️ **Warning: Currently running on CPU, which will be very slow. It is recommended to use a CUDA GPU for better performance.**",
     "info_gpu_available": "ℹ️ **Tip: CUDA GPU detected. Will attempt to run on GPU after selecting a model.**",
     "warning_no_gpu": "⚠️ **Warning: CUDA GPU not detected. Will run on CPU after selecting a model, which may be slower.**"
