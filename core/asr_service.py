@@ -125,7 +125,7 @@ class ASRService(IASRService):
                 )
 
                 chunk_output_list = self.model.transcribe(
-                    [temp_chunk_file_path], batch_size=1, timestamps=True
+                    [temp_chunk_file_path], batch_size=1, timestamps=True, return_hypotheses=True
                 )
         
                 chunk_global_start_offset_sec = start_time_ms / 1000.0
