@@ -62,21 +62,28 @@ class ConfigManager(IConfigManager):
         return self.config.copy()
 
 
-    def save_config(self, local_model_path: str, chunk_length: int, cloud_model_name: str = None, language: str = "None"):
-        """将当前配置保存到 config.json。"""
-        current_language = self.config.get("language", "zh")
-        final_language = language if language is not None else current_language
+    def save_config(self,**kwargs) -> None:
+        """
+        保存配置到 config.json 文件。
+        :param kwargs: 接受以下关键字参数:
+        - local_model_path (str): 本地模型路径
+        - chunk_length_s (int): 分块长度（秒）
+        - cloud_model_name (str): 云端模型名称
+        - language (str): 界面语言
+        """
 
-        config_to_save = {
-            "local_model_path": local_model_path,  # NGC 为空字符串，本地为路径，如果从未选择则为 None
-            "chunk_length_s": chunk_length,
-            "cloud_model_name": cloud_model_name,
-            "language": final_language,
-        }
+        # 1. 拿出现有的配置作为基础
+        current_config = self.get_config_all()
+
+         # 2. 用传入的新值覆盖旧值 (如果 kwargs 里没传某个键，旧值会被保留)
+        for key, value in kwargs.items():
+            if key in current_config:
+                current_config[key] = value
+
         try:
             with open(self.config_path, "w", encoding="utf-8") as config_file:
-                json.dump(config_to_save, config_file, indent=4)
-            self.config = config_to_save #更新内存中的配置
+                json.dump(current_config, config_file, indent=4)
+            self.config = current_config  #更新内存中的配置
             logger.info(f"配置已保存到 {self.config_path}")
         except Exception as e:
             logger.error(f"错误：保存配置文件 '{self.config_path}' 失败: {e}")
