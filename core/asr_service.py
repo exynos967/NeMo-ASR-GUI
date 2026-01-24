@@ -7,6 +7,7 @@ from utils.logger import logger
 from interfaces import IASRService
 from utils.exceptions import ModelLoadError
 from core.post_processors import DefaultSegmentStrategy, JapaneseCharStrategy
+import gc
 
 
 class ASRService(IASRService):
@@ -26,10 +27,31 @@ class ASRService(IASRService):
         """检查 ASR 模型是否已加载。"""
         return self.model is not None
     
+    def _release_memory(self):
+        """释放显存和内存"""
+        if self.model is not None:
+            logger.info("释放当前模型占用的显存和内存...")
+            try:
+                # 1. 将模型移动到 CPU (有助于某些情况下的彻底释放)
+                self.model.to('cpu')
+                # 2. 删除模型引用
+                del self.model
+                self.model = None
+                # 3. 强制执行垃圾回收
+                gc.collect()
+
+                # 4. 清理 CUDA 缓存（如果使用 GPU）
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                    torch.cuda.ipc_collect()
+                logger.info("旧模型显存释放完成。")
+            except Exception as e:
+                logger.error(f"释放显存时出错: {e}")
+
+
     def _update_strategy(self, model_name: str):
         """
         【工厂方法逻辑】：根据模型名称决定使用哪个策略。
-        这是整个设计模式的核心切换点。
         """
         name_lower = model_name.lower()
         
@@ -43,6 +65,9 @@ class ASRService(IASRService):
 
     def load_model_from_ngc(self, model_name: str) -> str:
         """从 NVIDIA NGC 加载预训练模型。"""
+
+        # 释放当前模型占用的显存和内存
+        self._release_memory()
         try:
             self.model = nemo_asr.models.ASRModel.from_pretrained(
                 model_name=model_name, map_location=self.device
@@ -56,6 +81,9 @@ class ASRService(IASRService):
         
     def load_model_from_local(self, model_path: str) -> str:
         """从本地 .nemo 文件加载模型。"""
+
+        # 释放当前模型占用的显存和内存
+        self._release_memory()
         actual_path = model_path.strip()
         if not os.path.exists(actual_path) or not actual_path.endswith(".nemo"):
             return f"错误：指定的本地模型路径无效: {actual_path}"
