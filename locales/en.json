@@ -95,5 +95,17 @@
   "translator": {
     "file_not_found": "Translation file not found",
     "load_error": "Error loading translation file: {error}"
-  }
+  },
+  "output": {
+    "accordion_title": "Output Configuration",
+    "tab_format": "Subtitle Format",
+    "tab_word_level": "Word/Char Level Output",
+    "word_level_label": "Word/Char Level Formats",
+    "word_level_info": "Contains timestamp info for every character/word. Suitable for precise synchronization.",
+    "tab_split": "Line Length Settings",
+    "enable_split_label": "Enable Line Length Limit",
+    "max_width_label": "Max Characters per Line",
+    "max_width_info": "Forces a line break if exceeded. Applies to standard subtitles only; affects neither Char nor Word level output.",
+    "tab_segmentation": "Segmentation Rules"
+}
 }

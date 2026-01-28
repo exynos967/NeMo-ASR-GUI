@@ -109,6 +109,66 @@ class SubtitleService(ISubtitleGenerator):
             content += lrc_line
         return content
     
+    def _generate_word_srt(self, segment_timestamps: list) -> str:
+        """
+        生成单词级 SRT：每个单词作为一个独立的字幕块
+        """
+        content = ""
+        word_counter = 1
+        
+        for seg in segment_timestamps:
+            words_in_seg = seg.get("words", [])
+            
+            # 如果没有 word 数据，回退到段落模式
+            if not words_in_seg:
+                content += self._render_srt_block(word_counter, seg["start"], seg["end"], seg["segment"])
+                word_counter += 1
+                continue
+
+            for w in words_in_seg:
+                word_text = w["word"].strip()
+                if not word_text: continue
+                
+                content += self._render_srt_block(
+                    word_counter, 
+                    w["start"], 
+                    w["end"], 
+                    word_text
+                )
+                word_counter += 1
+                
+        return content
+    
+    def _generate_char_srt(self, segment_timestamps: list) -> str:
+        """
+        生成char级 SRT：每个单词作为一个独立的字幕块
+        """
+        content = ""
+        char_counter = 1
+        
+        for seg in segment_timestamps:
+            chars_in_seg = seg.get("chars", [])
+            
+            # 如果没有 word 数据，回退到段落模式
+            if not chars_in_seg:
+                content += self._render_srt_block(char_counter, seg["start"], seg["end"], seg["segment"])
+                char_counter += 1
+                continue
+
+            for c in chars_in_seg:
+                char_text = c["char"]
+                if not char_text: continue
+                
+                content += self._render_srt_block(
+                    char_counter, 
+                    c["start"], 
+                    c["end"], 
+                    char_text
+                )
+                char_counter += 1
+                
+        return content
+    
     def _generate_ass(self, segment_timestamps: list) -> str:
         """
         生成 ASS 格式字幕内容。
@@ -163,3 +223,6 @@ class SubtitleService(ISubtitleGenerator):
             return self._format_ass_time(seconds + 0.01)
             
         return f"{hours}:{minutes:02}:{secs:02}.{centiseconds:02}"
+    
+    def _render_srt_block(self, index, start, end, text) -> str:
+        return f"{index}\n{self._format_time(start)} --> {self._format_time(end)}\n{text}\n\n"

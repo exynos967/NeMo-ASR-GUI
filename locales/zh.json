@@ -95,5 +95,17 @@
   "translator": {
     "file_not_found": "未找到翻译文件",
     "load_error": "加载翻译文件时出错: {error}"
-  }
+  },
+  "output": {
+    "accordion_title": "输出配置",
+    "tab_format": "字幕格式",
+    "tab_word_level": "Word/Char 级输出",
+    "word_level_label": "Word/Char 级输出格式",
+    "word_level_info": "此格式包含每个字符/单词的时间戳信息，适用于需要精确同步的场景。",
+    "tab_split": "单句字幕长度设置",
+    "enable_split_label": "启用单行长度限制",
+    "max_width_label": "单行最大字符数 (Max Characters)",
+    "max_width_info": "超过此长度将强制换行。仅对普通字幕生效，不影响 Char/Word 级输出。",
+    "tab_segmentation": "断句规则"
+}
 }

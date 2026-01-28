@@ -8,6 +8,7 @@ from utils.translator import t, set_language, get_language
 
 initial_model_status = t("model.not_loaded")
 
+
 def create_ui(app: IApplication) -> gr.Blocks:
     """
     创建 Gradio 用户界面。并返回 Gradio Blocks UI对象。
@@ -29,21 +30,27 @@ def create_ui(app: IApplication) -> gr.Blocks:
     saved_cloud_model = initial_config.get("cloud_model_name")
     saved_language = initial_config.get("language", "zh")
     initial_chunk_length = initial_config.get("chunk_length_s")
-    
+
     # 设置初始语言
     set_language(saved_language)
 
     # --- 自动加载模型并设置初始状态 (国际化) ---
     global initial_model_status
     if saved_model_path is not None:
-        if saved_model_path == "": # NGC 模型
+        if saved_model_path == "":  # NGC 模型
             logger.info(t("model.loading_cloud", model_name=saved_cloud_model))
-            initial_model_status = app.asr_service.load_model_from_ngc(saved_cloud_model)
-        elif os.path.exists(saved_model_path): # 本地模型存在
+            initial_model_status = app.asr_service.load_model_from_ngc(
+                saved_cloud_model
+            )
+        elif os.path.exists(saved_model_path):  # 本地模型存在
             logger.info(t("model.loading_local", path=saved_model_path))
-            initial_model_status = app.asr_service.load_model_from_local(saved_model_path)
+            initial_model_status = app.asr_service.load_model_from_local(
+                saved_model_path
+            )
         else:
-            initial_model_status = t("model.error_path_not_found", path=saved_model_path)
+            initial_model_status = t(
+                "model.error_path_not_found", path=saved_model_path
+            )
 
     # --- 语言切换的核心函数 ---
     def change_language(lang):
@@ -52,7 +59,7 @@ def create_ui(app: IApplication) -> gr.Blocks:
             local_model_path=saved_model_path,
             chunk_length=initial_chunk_length,
             cloud_model_name=saved_cloud_model,
-            language=lang
+            language=lang,
         )
         # 返回一个字典，键是UI组件，值是更新后的属性
         return {
@@ -62,14 +69,21 @@ def create_ui(app: IApplication) -> gr.Blocks:
             # 模型设置区域
             model_settings_title: gr.update(label=t("model.settings_title")),
             model_cloud_section_title: gr.update(value=t("model.cloud_section_title")),
-            cloud_model_dropdown: gr.update(label=t("model.cloud_model_label"), info=t("model.cloud_model_info")),
+            cloud_model_dropdown: gr.update(
+                label=t("model.cloud_model_label"), info=t("model.cloud_model_info")
+            ),
             model_description: gr.update(label=t("model.model_description_label")),
             load_cloud_model_button: gr.update(value=t("model.load_cloud_button")),
             model_local_section_title: gr.update(value=t("model.local_section_title")),
-            local_model_path_input: gr.update(label=t("model.local_path_label"), placeholder=t("model.local_path_placeholder")),
+            local_model_path_input: gr.update(
+                label=t("model.local_path_label"),
+                placeholder=t("model.local_path_placeholder"),
+            ),
             load_local_model_button: gr.update(value=t("model.load_local_button")),
             model_status_output: gr.update(label=t("model.status_label")),
-            chunk_slider: gr.update(label=t("model.chunk_length_label"), info=t("model.chunk_length_info")),
+            chunk_slider: gr.update(
+                label=t("model.chunk_length_label"), info=t("model.chunk_length_info")
+            ),
             # 字幕生成区域
             transcription_tab: gr.update(label=t("transcription.tab_title")),
             format_checkboxes: gr.update(label=t("transcription.format_label")),
@@ -85,7 +99,18 @@ def create_ui(app: IApplication) -> gr.Blocks:
             ui_warning_cpu_md: gr.update(value=t("ui.warning_cpu")),
             ui_info_gpu_available_md: gr.update(value=t("ui.info_gpu_available")),
             ui_warning_no_gpu_md: gr.update(value=t("ui.warning_no_gpu")),
-            
+            # 输出配置区域
+            word_format_checkboxes: gr.update(
+                label=t("output.word_level_label"), info=t("output.word_level_info")
+            ),
+            enable_split_checkbox: gr.update(label=t("output.enable_split_label")),
+            max_line_width_slider: gr.update(
+                label=t("output.max_width_label"), info=t("output.max_width_info")
+            ),
+            output_config_accordion: gr.update(label=t("output.accordion_title")),
+            tab_format: gr.update(label=t("output.tab_format")),
+            tab_word_level: gr.update(label=t("output.tab_word_level")),
+            tab_split: gr.update(label=t("output.tab_split")),
         }
 
     # --- 构建UI界面 ---
@@ -95,12 +120,17 @@ def create_ui(app: IApplication) -> gr.Blocks:
         with gr.Row():
             with gr.Column(scale=1):
                 language_dropdown = gr.Dropdown(
-                    choices=[("中文", "zh"), ("English", "en"), ("日本語", "ja"), ("한국어", "ko")],
+                    choices=[
+                        ("中文", "zh"),
+                        ("English", "en"),
+                        ("日本語", "ja"),
+                        ("한국어", "ko"),
+                    ],
                     value=saved_language,
-                    label= "中文/English/日本語/한국어",
+                    label="中文/English/日本語/한국어",
                     interactive=True,
                 )
-        
+
         app_description = gr.Markdown(t("app.description"))
 
         with gr.Accordion(t("model.settings_title"), open=True) as model_settings_title:
@@ -112,28 +142,30 @@ def create_ui(app: IApplication) -> gr.Blocks:
                 info=t("model.cloud_model_info"),
                 interactive=True,
             )
-            
+
             def update_model_description(model_name):
                 return AVAILABLE_MODELS.get(model_name)
-            
+
             model_description = gr.Textbox(
                 label=t("model.model_description_label"),
                 value=AVAILABLE_MODELS.get(saved_cloud_model, ""),
                 interactive=False,
                 lines=1,
             )
-            
+
             cloud_model_dropdown.change(
                 fn=update_model_description,
                 inputs=[cloud_model_dropdown],
-                outputs=[model_description]
+                outputs=[model_description],
             )
-            
-            load_cloud_model_button = gr.Button(t("model.load_cloud_button"), variant="primary", size="lg")
-            
+
+            load_cloud_model_button = gr.Button(
+                t("model.load_cloud_button"), variant="primary", size="lg"
+            )
+
             gr.Markdown("---")
             model_local_section_title = gr.Markdown(t("model.local_section_title"))
-            
+
             with gr.Row():
                 with gr.Column(scale=3):
                     local_model_path_input = gr.Textbox(
@@ -142,7 +174,9 @@ def create_ui(app: IApplication) -> gr.Blocks:
                         value=saved_model_path if saved_model_path is not None else "",
                     )
                 with gr.Column(scale=1, min_width=150):
-                    load_local_model_button = gr.Button(t("model.load_local_button"), variant="secondary")
+                    load_local_model_button = gr.Button(
+                        t("model.load_local_button"), variant="secondary"
+                    )
 
             model_status_output = gr.Textbox(
                 label=t("model.status_label"),
@@ -158,7 +192,7 @@ def create_ui(app: IApplication) -> gr.Blocks:
                 value=initial_chunk_length,
                 step=5,
                 label=t("model.chunk_length_label"),
-                info=t("model.chunk_length_info")
+                info=t("model.chunk_length_info"),
             )
 
         gr.Markdown("---")
@@ -168,25 +202,64 @@ def create_ui(app: IApplication) -> gr.Blocks:
                 label=t("transcription.upload_label"),
                 file_count="multiple",
             )
+        # --- 输出配置区域---
+        with gr.Accordion(
+            t("output.accordion_title"), open=False
+        ) as output_config_accordion:
 
-        format_checkboxes = gr.CheckboxGroup(
-            choices=["srt", "vtt", "txt", "json", "lrc", "ass"],
-            value=["srt"],
-            label=t("transcription.format_label"),
-            interactive=True,
-        )
+            # --- Tab 1: 基础格式 ---
+            with gr.Tab(t("output.tab_format")) as tab_format:
+                format_checkboxes = gr.CheckboxGroup(
+                    choices=["srt", "vtt", "txt", "json", "lrc", "ass"],
+                    value=["srt"],
+                    label=t("transcription.format_label"),
+                    interactive=True,
+                )
+
+            # --- Tab 2: 逐字/逐词格式 ---
+            with gr.Tab(t("output.tab_word_level")) as tab_word_level:
+                word_format_checkboxes = gr.CheckboxGroup(
+                    choices=[("word_srt", "word_srt"), ("char_srt", "char_srt")],
+                    label=t("output.word_level_label"),
+                    info=t("output.word_level_info"),
+                    interactive=True,
+                )
+
+            # --- Tab 3: 长度限制 ---
+            with gr.Tab(t("output.tab_split")) as tab_split:
+                enable_split_checkbox = gr.Checkbox(
+                    label=t("output.enable_split_label"), value=False
+                )
+
+                max_line_width_slider = gr.Slider(
+                    minimum=10,
+                    maximum=100,
+                    value=40,
+                    step=1,
+                    label=t("output.max_width_label"),
+                    info=t("output.max_width_info"),
+                )
 
         media_submit_button = gr.Button(
-                t("transcription.submit_button"), variant="primary", size="lg"
-            )
+            t("transcription.submit_button"), variant="primary", size="lg"
+        )
 
-        status_output = gr.Textbox(label=t("transcription.status_label"), lines=1, interactive=False)
-        with gr.Accordion(t("transcription.result_title"), open=True) as subtitle_result_accordion:
+        status_output = gr.Textbox(
+            label=t("transcription.status_label"), lines=1, interactive=False
+        )
+        with gr.Accordion(
+            t("transcription.result_title"), open=True
+        ) as subtitle_result_accordion:
             subtitle_file_output = gr.File(
-                label=t("transcription.download_label"), interactive=False, file_count="multiple"
+                label=t("transcription.download_label"),
+                interactive=False,
+                file_count="multiple",
             )
             subtitle_preview_output = gr.Textbox(
-                label=t("transcription.preview_label"), lines=10, max_lines=20, interactive=False
+                label=t("transcription.preview_label"),
+                lines=10,
+                max_lines=20,
+                interactive=False,
             )
 
         # --- 事件监听器 ---
@@ -203,7 +276,14 @@ def create_ui(app: IApplication) -> gr.Blocks:
 
         media_submit_button.click(
             fn=app.transcription_controller.process_media,
-            inputs=[video_input, chunk_slider, format_checkboxes],
+            inputs=[
+                video_input,
+                chunk_slider,
+                format_checkboxes,
+                word_format_checkboxes,
+                enable_split_checkbox,
+                max_line_width_slider,
+            ],
             outputs=[status_output, subtitle_file_output, subtitle_preview_output],
         )
 
@@ -214,28 +294,55 @@ def create_ui(app: IApplication) -> gr.Blocks:
         ui_warning_cpu_md = gr.Markdown(visible=False)
         ui_info_gpu_available_md = gr.Markdown(visible=False)
         ui_warning_no_gpu_md = gr.Markdown(visible=False)
-        
+
         # --- 设备状态显示 (国际化) ---
         device = app.asr_service.device
         if device and device.type == "cpu":
             ui_warning_cpu_md = gr.Markdown(t("ui.warning_cpu"), visible=True)
         elif device and torch.cuda.is_available():
-            ui_info_gpu_available_md = gr.Markdown(t("ui.info_gpu_available"), visible=True)
-        else: # not device and not torch.cuda.is_available()
+            ui_info_gpu_available_md = gr.Markdown(
+                t("ui.info_gpu_available"), visible=True
+            )
+        else:  # not device and not torch.cuda.is_available()
             ui_warning_no_gpu_md = gr.Markdown(t("ui.warning_no_gpu"), visible=True)
 
         # --- 语言切换事件监听器 ---
         # 创建一个列表，包含所有需要更新的UI组件
         all_ui_outputs = [
-            title_md, app_description, model_settings_title, model_cloud_section_title,
-            cloud_model_dropdown, model_description, load_cloud_model_button, 
-            model_local_section_title, local_model_path_input, load_local_model_button,
-            model_status_output, chunk_slider, transcription_tab, video_input,
-            media_submit_button, status_output, subtitle_result_accordion, subtitle_file_output,
-            subtitle_preview_output, tips_title_md, tips_content_md, ui_warning_cpu_md, ui_info_gpu_available_md,
-            ui_warning_no_gpu_md,format_checkboxes
+            title_md,
+            app_description,
+            model_settings_title,
+            model_cloud_section_title,
+            cloud_model_dropdown,
+            model_description,
+            load_cloud_model_button,
+            model_local_section_title,
+            local_model_path_input,
+            load_local_model_button,
+            model_status_output,
+            chunk_slider,
+            transcription_tab,
+            video_input,
+            media_submit_button,
+            status_output,
+            subtitle_result_accordion,
+            subtitle_file_output,
+            subtitle_preview_output,
+            tips_title_md,
+            tips_content_md,
+            ui_warning_cpu_md,
+            ui_info_gpu_available_md,
+            ui_warning_no_gpu_md,
+            format_checkboxes,
+            word_format_checkboxes,
+            enable_split_checkbox,
+            max_line_width_slider,
+            output_config_accordion,
+            tab_format,
+            tab_word_level,
+            tab_split,
         ]
-        
+
         language_dropdown.change(
             fn=change_language,
             inputs=[language_dropdown],

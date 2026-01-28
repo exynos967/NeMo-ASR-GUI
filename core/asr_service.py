@@ -105,12 +105,13 @@ class ASRService(IASRService):
     
 
 
-    def transcribe_audio_in_chunks(self, audio_path: str, chunk_length_ms: int) -> list:
+    def transcribe_audio_in_chunks(self, audio_path: str, chunk_length_ms: int, max_chars: int = 0) -> list:
         """
         将音频文件分块转录并返回带有全局时间戳的段列表。
         ARGS:
             audio_path: 音频文件路径 (假设为 WAV)。
             chunk_length_ms: 每块的长度（毫秒）。
+            max_chars: 单句最大长度限制，0 表示不限制
         RETURNS:
             包含 {'start': float, 'end': float, 'segment': str} 的列表。
 
@@ -159,7 +160,7 @@ class ASRService(IASRService):
                 chunk_global_start_offset_sec = start_time_ms / 1000.0
 
                 new_segments = self.processor_strategy.process(
-                    chunk_output_list, chunk_global_start_offset_sec
+                    chunk_output_list, chunk_global_start_offset_sec, max_chars=max_chars
                 )
                 
                 if new_segments:

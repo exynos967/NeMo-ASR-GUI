@@ -1,5 +1,6 @@
 
 import os
+import re
 import time
 from pathlib import Path
 from interfaces import IASRService
@@ -22,14 +23,17 @@ class TranscriptionController(ITranscriptionController):
         self.subtitles_folder_path = Path(__file__).resolve().parent.parent / "subtitles"
 
     
-    def process_media(self, media_file_objs: list, chunk_length_s: int, output_formats: list):
-        """处理上传的视频/音频文件，生成 SRT 字幕文件。
+    def process_media(self, media_file_objs: list, chunk_length_s: int, output_formats: list, word_output_formats: list, enable_split: bool = False, max_chars: int = 0):
+        """处理上传的视频/音频文件，生成字幕文件。
         ARGS:
             media_file_objs: Gradio 上传的视频/音频文件对象列表。
             chunk_length_s: 音频分块长度（秒）。
             outpu_formats: 输出字幕格式列表 (e.g., ['srt', 'vtt'])
+            word_output_formats: 额外的输出格式列表
+            enable_split: 是否启用长字幕拆分。
+            max_chars: 拆分时每个字幕的最大字符数。
         YIELDS:
-            状态消息 (str), 输出 SRT 文件路径列表 (list), SRT 内容预览 (str)。
+            状态消息 (str), 输出 字幕 文件路径列表 (list), 字幕 内容预览。
         """
 
         if not self.app_services.is_model_loaded:
@@ -39,7 +43,10 @@ class TranscriptionController(ITranscriptionController):
         if media_file_objs is None:
             yield "请上传至少一个视频文件。", None, ""
             return
-        
+        output_formats = list(set(output_formats + word_output_formats))
+
+        logger.info(f"请求的输出格式: {output_formats}")
+
         if not output_formats:
             output_formats = ['srt']
 
@@ -66,16 +73,19 @@ class TranscriptionController(ITranscriptionController):
 
                 chunk_length_ms = chunk_length_s * 1000
                 yield f"状态：正在转录音频 (分块大小: {chunk_length_s}秒)...", None, ""
+                final_max_chars = max_chars if enable_split else 0
+         
                 segment_timestamps = self.app_services.transcribe_audio_in_chunks(
-                    extracted_audio_path, chunk_length_ms
-                )
+                        extracted_audio_path, chunk_length_ms, final_max_chars
+                        )
+                    
 
                 if not segment_timestamps:
                     yield f"警告：转录文件 {file_name} 未生成有效的时间戳。正在跳过此文件。", None, ""
                     continue
 
-
-                base_name = os.path.basename(input_media_path).rsplit(".", 1)[0]
+                original_base_name = os.path.basename(input_media_path).rsplit(".", 1)[0]
+                base_name = self._sanitize_filename(original_base_name)
 
                 yield f"状态：正在生成字幕文件 ({', '.join(output_formats)})...", None, ""
 
@@ -118,5 +128,7 @@ class TranscriptionController(ITranscriptionController):
     
 
 
-
+    def _sanitize_filename(self, filename: str) -> str:
+        # 替换 Windows/Linux 常见的非法字符
+        return re.sub(r'[\\/*?:"<>|]', "_", filename)
     
