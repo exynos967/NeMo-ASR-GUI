@@ -204,7 +204,7 @@ def create_ui(app: IApplication) -> gr.Blocks:
             )
         # --- 输出配置区域---
         with gr.Accordion(
-            t("output.accordion_title"), open=False
+            t("output.accordion_title"), open=True
         ) as output_config_accordion:
 
             # --- Tab 1: 基础格式 ---

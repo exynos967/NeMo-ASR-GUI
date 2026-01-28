@@ -22,6 +22,13 @@ class TranscriptionController(ITranscriptionController):
         
         self.subtitles_folder_path = Path(__file__).resolve().parent.parent / "subtitles"
 
+          # 定义格式规格：{ 内部格式名: (文件名后缀, 最终文件扩展名) }
+        self.FORMAT_SPECS = {
+            "word_srt": ("_word_srt", "srt"),
+            "char_srt": ("_char_srt", "srt"),
+            # 默认情况下，后缀为空，扩展名即为格式名本身
+        }
+
     
     def process_media(self, media_file_objs: list, chunk_length_s: int, output_formats: list, word_output_formats: list, enable_split: bool = False, max_chars: int = 0):
         """处理上传的视频/音频文件，生成字幕文件。
@@ -95,8 +102,14 @@ class TranscriptionController(ITranscriptionController):
                     os.makedirs(self.subtitles_folder_path, exist_ok=True)
                 for fmt in output_formats:
                     try:
+
+                        # 1. 获取规格：如果不在表里，就直接用 fmt 作为扩展名
+                        suffix, ext = self.FORMAT_SPECS.get(fmt, ("", fmt))
+                        # 2. 生成文件名：优雅地组合 base_name + 后缀 + 扩展名
+                        output_filename = f"{base_name}{suffix}.{ext}"
+                
                         content = self.subtitle_generator.generate_content(segment_timestamps, fmt)
-                        output_path_for_download = os.path.join(self.subtitles_folder_path,  f"{base_name}.{fmt}")
+                        output_path_for_download = os.path.join(self.subtitles_folder_path, output_filename)
                         with open(output_path_for_download, "w", encoding="utf-8") as subtitle_file:
                             subtitle_file.write(content)
                         output_files_all.append(output_path_for_download)

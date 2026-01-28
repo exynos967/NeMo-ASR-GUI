@@ -8,12 +8,13 @@ class ITranscriptionStrategy(ABC):
     规定了所有处理器都必须实现 process 方法。
     """
     @abstractmethod
-    def process(self, chunk_output_list, chunk_offset_sec: float) -> list:
+    def process(self, chunk_output_list, chunk_offset_sec: float,  max_chars: int = 0) -> list:
         """
         处理模型输出的原始数据，返回标准化的字幕段落列表。
         Args:
             chunk_output_list: NeMo 模型 transcribe 方法的返回结果
             chunk_offset_sec: 当前音频块的起始时间偏移量（秒）
+            max_chars: 单句最大长度限制，0 表示不限制
         Returns:
             list: [{'start': float, 'end': float, 'segment': str}, ...]
         """
